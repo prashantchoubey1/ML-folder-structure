@@ -1,3 +1,5 @@
+# Create folds file has been created to split the dataframe into different splits and create test and train 
+# data for the models
 import pandas as pd
 import config 
 from sklearn.model_selection import KFold

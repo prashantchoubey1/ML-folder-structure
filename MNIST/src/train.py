@@ -1,3 +1,5 @@
+# This file has the main class where we import all files including config, model_dipatche and create folds 
+# and there functions are imported and used to make the code parameterized 
 import pandas as pd
 from sklearn import tree 
 from sklearn import metrics
@@ -5,10 +7,11 @@ import joblib
 import config
 import os
 import argparse
+import model_dispatcher as md
 
 df_train = pd.read_csv(config.TRAINING_FOLD_FILE)
 
-def run_predictions(k):
+def run_predictions(k,model):
     # Creating training and test sets based on the folds
     df_train_fold = df_train[df_train['fold']!=k].reset_index(drop=True)
     df_test_fold = df_train[df_train['fold']==k].reset_index(drop=True)
@@ -20,9 +23,8 @@ def run_predictions(k):
     y_test = df_test_fold.label.values
 
     # Create a model object
-    classifier = 'decision_tree'
-    dt_model = tree.DecisionTreeClassifier()
-    dt_model.fit(X_train,X_test)
+    classifier = 'model'
+    dt_model = md.model[model].fit(X_train,X_test)
     y_pred = dt_model.predict(y_train)
 
     # Accuracy calculation
@@ -40,7 +42,8 @@ if __name__== '__main__':
     parser = argparse.ArgumentParser()
     # Add agrument with the name and type for user input
     parser.add_argument('--folds',type=int)
+    parser.add_argument('--model',type=str)
     # Read the argument from command line
     arg = parser.parse_args()
     # Pass the argument read from command line to the function
-    run_predictions(arg.folds)
+    run_predictions(arg.folds,arg.model)
